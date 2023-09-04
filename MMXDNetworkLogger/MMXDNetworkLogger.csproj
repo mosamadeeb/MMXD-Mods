@@ -1,0 +1,166 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>MMXDNetworkLogger</AssemblyName>
+    <Description>My first plugin</Description>
+    <Version>1.0.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <RestoreAdditionalProjectSources>
+      https://api.nuget.org/v3/index.json;
+      https://nuget.bepinex.dev/v3/index.json;
+      https://nuget.samboy.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
+    <RootNamespace>MMXDNetworkLogger</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Unity.Mono" Version="6.0.0-be.*" IncludeAssets="compile" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	  <PackageReference Include="UnityEngine.Modules" Version="2018.4.36" IncludeAssets="compile" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <mmxd_game_path Condition="'$(mmxd_game_path)'==''">E:\SteamLibrary\steamapps\common\ROCKMAN X DiVE\</mmxd_game_path>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="ACTk.Examples.Genuine.Runtime" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\ACTk.Examples.Genuine.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="ACTk.Examples.Runtime" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\ACTk.Examples.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="ACTk.Runtime" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\ACTk.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Apple" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Apple.dll</HintPath>
+    </Reference>
+    <Reference Include="AppleAuth" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\AppleAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="AppleCore" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\AppleCore.dll</HintPath>
+    </Reference>
+    <Reference Include="AppleMacos" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\AppleMacos.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="CapCommon" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\CapCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="Cinemachine" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Cinemachine.dll</HintPath>
+    </Reference>
+    <Reference Include="Coffee.SoftMaskForUGUI" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Coffee.SoftMaskForUGUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Coffee.UIParticle" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Coffee.UIParticle.dll</HintPath>
+    </Reference>
+    <Reference Include="Coffee.UIParticle.Demo" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Coffee.UIParticle.Demo.dll</HintPath>
+    </Reference>
+    <Reference Include="CriMw.CriWare.Runtime" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\CriMw.CriWare.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="DataProvider" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\DataProvider.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Unity" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Facebook.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Unity.Gameroom" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Facebook.Unity.Gameroom.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Unity.Settings" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Facebook.Unity.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="FacebookNamedPipeClient" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\FacebookNamedPipeClient.dll</HintPath>
+    </Reference>
+    <Reference Include="FacebookStore" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\FacebookStore.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch.Steamworks.Win64" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.App" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Firebase.App.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.Messaging" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Firebase.Messaging.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.Platform" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Firebase.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Firebase.TaskExtension" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Firebase.TaskExtension.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.MiniJson" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Google.MiniJson.dll</HintPath>
+    </Reference>
+    <Reference Include="InControl" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\InControl.dll</HintPath>
+    </Reference>
+    <Reference Include="JsonFx.Json" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\JsonFx.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ktx" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Ktx.dll</HintPath>
+    </Reference>
+    <Reference Include="LZ4" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\LZ4.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Posix" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.WebBrowser" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Mono.WebBrowser.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Novell.Directory.Ldap" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Novell.Directory.Ldap.dll</HintPath>
+    </Reference>
+    <Reference Include="PathCreator" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\PathCreator.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtocolSocket" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\ProtocolSocket.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtocolWeb" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\ProtocolWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Purchasing.Common" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Purchasing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Security" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Stores" Publicize="true">
+      <HintPath>$(mmxd_game_path)\Game_Data\Managed\Stores.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
