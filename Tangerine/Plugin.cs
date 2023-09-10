@@ -20,5 +20,6 @@ public class Plugin : BasePlugin
         _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
         TangerineDataManager.InitializeHarmony(_harmony);
         TangerineTextDataManager.InitializeHarmony(_harmony);
+        TangerineLoader.InitializeHarmony(_harmony);
     }
 }
