@@ -172,22 +172,36 @@ namespace Tangerine
         /// <inheritdoc cref="PatchTable{T}(T)"/>
         public static void PatchTable<T>(IEnumerable<Dictionary<string, object>> entries) where T : CapTableBase
         {
-            PatchTable<T>(entries, null, false);
+            PatchTable(typeof(T), entries, null, false);
         }
 
-        internal static void PatchTable<T>(IEnumerable<Dictionary<string, object>> entries, string tableDictName = null, bool isLocalization = false) where T : CapTableBase
+        /// <param name="tableType">Table type. Must be a subclass of <see cref="CapTableBase"/></param>
+        /// <inheritdoc cref="PatchTable{T}(Dictionary{string, object})"/>
+        public static void PatchTable(Dictionary<string, object> entry, Type tableType)
+        {
+            PatchTable(new Dictionary<string, object>[] { entry }, tableType);
+        }
+
+        /// <param name="tableType">Table type. Must be a subclass of <see cref="CapTableBase"/></param>
+        /// <inheritdoc cref="PatchTable{T}(IEnumerable{Dictionary{string, object}})"/>
+        public static void PatchTable(IEnumerable<Dictionary<string, object>> entries, Type tableType)
+        {
+            PatchTable(tableType, entries, null, false);
+        }
+
+        internal static void PatchTable(Type tableType, IEnumerable<Dictionary<string, object>> entries, string tableDictName = null, bool isLocalization = false)
         {
             if (tableDictName == null)
             {
-                if (typeof(T) == typeof(CapTableBase))
+                if (tableType == typeof(CapTableBase))
                 {
                     throw new ArgumentException($"{nameof(CapTableBase)} is a base class and cannot be patched");
                 }
 
-                tableDictName = typeof(T).Name + "_DICT";
+                tableDictName = tableType.Name + "_DICT";
             }
 
-            var patchAction = () => PatchTableOnce<T>(entries, tableDictName, isLocalization);
+            var patchAction = () => PatchTableOnce(tableType, entries, tableDictName, isLocalization);
             AddPatch(_patchDict, tableDictName, patchAction);
 
             // If not, will patch after initialization
@@ -197,14 +211,12 @@ namespace Tangerine
             }
         }
 
-        internal static void PatchTableOnce<T>(IEnumerable<Dictionary<string, object>> entries, string tableDictName, bool isLocalization = false) where T : CapTableBase
+        internal static void PatchTableOnce(Type tableType, IEnumerable<Dictionary<string, object>> entries, string tableDictName, bool isLocalization = false)
         {
             if (!entries.Any())
             {
                 return;
             }
-
-            var tableType = typeof(T);
 
             DictionaryWrapper<object, object> tableDict;
             if (isLocalization)

@@ -52,7 +52,7 @@ namespace Tangerine
         /// <inheritdoc cref="PatchTable(LOCALIZATION_TABLE, string)"/>
         public static void PatchTable(IEnumerable<Dictionary<string, object>> entries, string localizationTableDictName)
         {
-            var patchAction = () => TangerineDataManager.PatchTableOnce<LOCALIZATION_TABLE>(entries, localizationTableDictName, true);
+            var patchAction = () => TangerineDataManager.PatchTableOnce(typeof(LOCALIZATION_TABLE), entries, localizationTableDictName, true);
             TangerineDataManager.AddPatch(_patchDict, localizationTableDictName, patchAction);
 
             // If not, will patch after initialization
