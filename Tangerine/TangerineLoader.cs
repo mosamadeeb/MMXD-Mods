@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using Fasterflect;
+using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -15,6 +16,9 @@ namespace Tangerine
 
         // id.hash: filePath
         private static readonly Dictionary<string, string> _assetBundlePaths = new();
+
+        // (oldBundleName, oldAssetName): (newBundleName, newAssetName)
+        private static readonly Dictionary<(string, string), (string, string)> _assetRemapping = new();
 
         /// <summary>
         /// Adds an Asset Bundle to the game's dictionary to allow it to be loaded from a custom path.
@@ -54,10 +58,30 @@ namespace Tangerine
             _assetBundlePaths[hash] = filePath;
         }
 
+        /// <summary>
+        /// Remaps an asset from an existing asset bundle to another
+        /// </summary>
+        /// <param name="oldBundleName">Name (not hash) of original bundle</param>
+        /// <param name="oldAssetName">Name of original asset to remap</param>
+        /// <param name="newBundleName">Name (not hash) of target bundle, which must be added first using <see cref="AddAssetBundleId(AssetbundleId, string)"/></param>
+        /// <param name="newAssetName">Name of target asset in the target bundle</param>
+        public static void RemapAsset(string oldBundleName, string oldAssetName, string newBundleName, string newAssetName)
+        {
+            _assetRemapping[(oldBundleName, oldAssetName)] = (newBundleName, newAssetName);
+        }
+
         internal static void InitializeHarmony(Harmony harmony)
         {
             _harmony = harmony;
             _harmony.PatchAll(typeof(TangerineLoader));
+
+            _harmony.Patch(
+                typeof(AssetsBundleManager).Method(nameof(AssetsBundleManager.GetAssetAndAsyncLoad)).MakeGenericMethod(typeof(UnityEngine.Object)),
+                prefix: new HarmonyMethod(typeof(TangerineLoader).GetMethod(nameof(AsyncLoadAssetObjectPrefix), BindingFlags.NonPublic | BindingFlags.Static)));
+            
+            _harmony.Patch(
+                typeof(AssetsBundleManager).Method(nameof(AssetsBundleManager.GetAssstSync)).MakeGenericMethod(typeof(UnityEngine.Object)),
+                prefix: new HarmonyMethod(typeof(TangerineLoader).GetMethod(nameof(LoadAssetPrefix), BindingFlags.NonPublic | BindingFlags.Static)));
         }
 
         private static AssetbundleId CreateAssetbundleIdFromDict(Dictionary<string, object> dict)
@@ -91,6 +115,39 @@ namespace Tangerine
                 __result = filePath;
                 Plugin.Log.LogWarning($"Replaced path for file: ({__result})");
             }
+        }
+
+        private static void LoadAssetPrefix(ref string bundleName, ref string assetName)
+        {
+            if (_assetRemapping.TryGetValue((bundleName, assetName), out var target))
+            {
+                Plugin.Log.LogWarning($"Remapped asset from [{bundleName}]{assetName} to [{target.Item1}]{target.Item2}");
+                bundleName = target.Item1;
+                assetName = target.Item2;
+            }
+        }
+
+        private static void AsyncLoadAssetObjectPrefix(ref string bundleName, ref string assetName)
+        {
+            if (_assetRemapping.TryGetValue((bundleName, assetName), out var target))
+            {
+                Plugin.Log.LogWarning($"Remapped asset from [{bundleName}]{assetName} to [{target.Item1}]{target.Item2}");
+                bundleName = target.Item1;
+                assetName = target.Item2;
+            }
+
+            /*
+            // Example for updating callback
+            var p_cb_org = p_cb;
+
+            p_cb = (AssetsBundleManager.OnAsyncLoadAssetComplete<UnityEngine.Object>)
+                new Action<UnityEngine.Object>(
+                    (asset) =>
+                    {
+                        p_cb_org.Invoke(asset);
+                    }
+                );
+            */
         }
     }
 }
