@@ -23,4 +23,13 @@ public class Plugin : BasePlugin
         Game.TangerineCharacter.InitializeHarmony(_harmony);
         TangerineLoader.InitializeHarmony(_harmony);
     }
+
+    /// <summary>
+    /// Provide a log to this plugin so it can log before being loaded
+    /// </summary>
+    /// <param name="log">Any log source</param>
+    public static void ProvideLog(ManualLogSource log)
+    {
+        Plugin.Log = log;
+    }
 }

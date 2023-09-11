@@ -28,7 +28,7 @@ namespace Tangerine.Game
             
             if (!ClassInjector.IsTypeRegisteredInIl2Cpp(controllerType))
             {
-                Plugin.Log.LogWarning($"Registering character controller: {controllerType}");
+                Plugin.Log.LogWarning($"Registering character controller: {controllerType.FullName}");
 
                 var options = new RegisterTypeOptions()
                 {
