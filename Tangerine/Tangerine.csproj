@@ -368,6 +368,9 @@
     <Reference Include="Il2CppInterop.Runtime">
       <HintPath>$(mmxd_game_path)\BepInEx\core\Il2CppInterop.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>$(mmxd_game_path)\BepInEx\core\Mono.Cecil.dll</HintPath>
+    </Reference>
     <Reference Include="Cpp2IL.Core">
       <HintPath>$(mmxd_game_path)\BepInEx\core\Cpp2IL.Core.dll</HintPath>
     </Reference>

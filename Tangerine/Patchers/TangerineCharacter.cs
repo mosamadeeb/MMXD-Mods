@@ -2,17 +2,23 @@
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using System;
-using System.Collections.Generic;
+using Tangerine.Manager;
 
-namespace Tangerine.Game
+namespace Tangerine.Patchers
 {
-    public static class TangerineCharacter
+    public class TangerineCharacter
     {
-        private static readonly Dictionary<int, Type> _characterDict = new();
+        internal static readonly ModDictionary<int, Type> CharacterDict = new();
 
         internal static void InitializeHarmony(Harmony harmony)
         {
             harmony.PatchAll(typeof(TangerineCharacter));
+        }
+
+        private readonly string _modGuid;
+        internal TangerineCharacter(string modGuid)
+        {
+            _modGuid = modGuid;
         }
 
         /// <summary>
@@ -21,11 +27,11 @@ namespace Tangerine.Game
         /// <param name="characterId"><c>n_ID</c> of the character that will use this controller</param>
         /// <param name="controllerType"><see langword="typeof"/> the controller class</param>
         /// <param name="interfaces">Interfaces the class should implement (e.g. <see cref="ILogicUpdate"/>)</param>
-        public static void AddController(int characterId, Type controllerType, Type[] interfaces)
+        public void AddController(int characterId, Type controllerType, Type[] interfaces)
         {
             // Throw an exception if a controller with the same ID is already registered
-            _characterDict[characterId] = controllerType;
-            
+            CharacterDict.Set(_modGuid, characterId, controllerType);
+
             if (!ClassInjector.IsTypeRegisteredInIl2Cpp(controllerType))
             {
                 Plugin.Log.LogWarning($"Registering character controller: {controllerType.FullName}");
@@ -42,14 +48,25 @@ namespace Tangerine.Game
             // EnumInjector.InjectEnumValues<EControlCharacter>(new Dictionary<string, object>() { { "X_DMC", 139 } });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="characterId"></param>
+        /// <returns></returns>
+        public bool RemoveController(int characterId)
+        {
+            // We can't unregister controllers, so all we can do is stop overriding the character id
+            return CharacterDict.Remove(_modGuid, characterId);
+        }
+
         [HarmonyPatch(typeof(CharacterControlFactory), nameof(CharacterControlFactory.GetCharacterControlType))]
         [HarmonyPrefix]
         private static bool CharacterControlTypePrefix(EControlCharacter character, int subID, ref Il2CppSystem.Type __result)
         {
-            if (_characterDict.TryGetValue((int)character, out var type))
+            if (CharacterDict.Base.TryGetValue((int)character, out var type))
             {
                 __result = Il2CppType.From(type);
-                Plugin.Log.LogWarning($"Loading character controller {__result}");
+                Plugin.Log.LogWarning($"Loading character controller {__result.Name}");
                 return false;
             }
 

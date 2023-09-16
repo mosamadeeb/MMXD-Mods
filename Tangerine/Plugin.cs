@@ -2,34 +2,43 @@ using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
+using Tangerine.Manager;
+using Tangerine.Patchers;
+using Tangerine.Patchers.DataProvider;
 
 namespace Tangerine;
 
-[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+[BepInPlugin(GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 public class Plugin : BasePlugin
 {
+    internal static string Location;
     internal static new ManualLogSource Log;
     private static Harmony _harmony;
+
+    public const string GUID = "0Tangerine";
 
     public override void Load()
     {
         // Plugin startup logic
         Plugin.Log = base.Log;
-        Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
+        Log.LogInfo($"Tangerine is loaded!");
 
-        _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
+        // Get folder
+        Location = IL2CPPChainloader.Instance.Plugins[GUID].Location;
+
+        _harmony = new Harmony(GUID);
         TangerineDataManager.InitializeHarmony(_harmony);
         TangerineTextDataManager.InitializeHarmony(_harmony);
-        Game.TangerineCharacter.InitializeHarmony(_harmony);
+        TangerineCharacter.InitializeHarmony(_harmony);
         TangerineLoader.InitializeHarmony(_harmony);
+
+        // Start loading mods
+        ModManager.Initialize();
     }
 
-    /// <summary>
-    /// Provide a log to this plugin so it can log before being loaded
-    /// </summary>
-    /// <param name="log">Any log source</param>
-    public static void ProvideLog(ManualLogSource log)
+    public override bool Unload()
     {
-        Plugin.Log = log;
+        _harmony.UnpatchSelf();
+        return true;
     }
 }
