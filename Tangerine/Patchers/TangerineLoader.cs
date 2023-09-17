@@ -1,4 +1,4 @@
-﻿using Fasterflect;
+using Fasterflect;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection;
@@ -280,6 +280,19 @@ namespace Tangerine.Patchers
                     }
                 );
             */
+        }
+
+        [HarmonyPatch(typeof(AssetbundleId), nameof(AssetbundleId.SetKeys))]
+        [HarmonyPrefix]
+        private static bool SetKeysPrefix(AssetbundleId __instance)
+        {
+            if (__instance.crc == 0)
+            {
+                __instance.Keys = new byte[] { 0 };
+                return false;
+            }
+
+            return true;
         }
     }
 }
