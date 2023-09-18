@@ -29,5 +29,6 @@ public class Plugin : TangerinePlugin
     private void RestoreCharacters()
     {
         _tangerine.Character.AddController(139, typeof(CH140_Controller), new Type[] { typeof(ILogicUpdate) });
+        _tangerine.Character.AddController(140, typeof(CH141_Controller), new Type[] { typeof(ILogicUpdate) });
     }
 }
