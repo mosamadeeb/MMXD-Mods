@@ -70,7 +70,7 @@ namespace Tangerine.Utils
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
 
-            return (bool)_remove(key);
+            return (bool)_remove(_obj, key);
         }
 
         public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)

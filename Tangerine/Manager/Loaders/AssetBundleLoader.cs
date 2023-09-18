@@ -46,7 +46,7 @@ namespace Tangerine.Manager.Loaders
                     else if (File.Exists(Path.Combine(BepInEx.Paths.GameDataPath, DownloadFolder, id.hash)))
                     {
                         // Fall back to game folder if neither of the above exist (this can be used to modify hash, crc, and size of existing vanilla bundles)
-                        Plugin.Log.LogWarning($"Custom bundle {id.name} does not exist in \"{assetBundleFolder}\". Falling back to game's DownloadData folder");
+                        Plugin.Log.LogWarning($"Custom bundle {id.name} does not exist in \"{Path.Combine(Path.GetFileName(modPath), AssetBundleFolder)}\". Falling back to game's DownloadData folder");
                         loader.AddAssetBundleId(id, Path.Combine(BepInEx.Paths.GameDataPath, DownloadFolder, id.hash));
                     }
                     else

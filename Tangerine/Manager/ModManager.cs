@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Il2CppInterop.Runtime.Injection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Tangerine.Manager.Mod;
@@ -7,6 +8,8 @@ namespace Tangerine.Manager
 {
     public static class ModManager
     {
+        internal static ModManagerBehaviour Behaviour = null;
+
         internal static readonly List<TangerineMod> LoadedMods = new();
         internal static List<ModInfo> Mods => LoadedMods.Select(m => m.Info).ToList();
 
@@ -93,8 +96,16 @@ namespace Tangerine.Manager
             return false;
         }
 
-        internal static void Initialize()
+        internal static bool ReloadMod(string guid)
         {
+            return DisableMod(guid) && EnableMod(guid);
+        }
+
+        internal static void Initialize(Plugin instance)
+        {
+            ClassInjector.RegisterTypeInIl2Cpp<ModManagerBehaviour>();
+            Behaviour = instance.AddComponent<ModManagerBehaviour>();
+
             foreach (var mod in LoadedMods)
             {
                 DisableMod(mod.Id);

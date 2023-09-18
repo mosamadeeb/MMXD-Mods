@@ -225,10 +225,14 @@ namespace Tangerine.Patchers
                 {
                     // Store original for restoring later
                     _originalAssetBundleIds[id.name] = orgId;
+                    Plugin.Log.LogWarning($"Updating AssetbundleId: [{id.hash}] {id.name}");
+                }
+                else
+                {
+                    Plugin.Log.LogWarning($"Adding AssetbundleId: [{id.hash}] {id.name}");
                 }
 
                 __instance.dictBundleID[id.name] = id;
-                Plugin.Log.LogWarning($"Added AssetbundleId: [{id.hash}] {id.name}");
             }
 
             Plugin.Log.LogWarning($"Unpatching {nameof(AssetsBundleManager)} postfix");

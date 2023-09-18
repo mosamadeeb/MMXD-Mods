@@ -33,7 +33,7 @@ public class Plugin : BasePlugin
         TangerineLoader.InitializeHarmony(_harmony);
 
         // Start loading mods
-        ModManager.Initialize();
+        ModManager.Initialize(this);
     }
 
     public override bool Unload()
