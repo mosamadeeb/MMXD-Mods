@@ -1,38 +1,36 @@
 ﻿using CallbackDefs;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Tangerine.Patchers.LogicUpdate;
+using Tangerine.Utils;
 using UnityEngine;
 
 namespace DmcCollabRestored.Character
 {
-    // Implements ILogicUpdate interface
-    public class CH140_Controller : CharacterControlBase
+    public class CH140_Controller : CharacterControlBase, ITangerineLogicUpdate
     {
-        private ILogicUpdate _logicUpdateInstance = null;
+        public System.IntPtr LogicPointer => this.Pointer;
 
-        private ILogicUpdate _logicUpdate
+        public void LogicUpdate()
         {
-            get
+            if (this.isInit)
             {
-                _logicUpdateInstance ??= new(this.Pointer);
-                return _logicUpdateInstance;
+                this.CheckFrenzyBuff();
             }
         }
 
         private void OnEnable()
         {
-            MonoBehaviourSingleton<GameLogicUpdateManager>.Instance.AddUpdate(_logicUpdate);
+            TangerineLogicUpdateManager.AddUpdate(this);
         }
 
         private void OnDisable()
         {
-            MonoBehaviourSingleton<GameLogicUpdateManager>.Instance.RemoveUpdate(_logicUpdate);
+            TangerineLogicUpdateManager.RemoveUpdate(this);
         }
 
         public override void Start()
         {
-            //base.Start();
-            this.LinkEntityReference();
-
+            this.CallBase<CharacterControlBase>("Start");
             this.InitializeSkill();
             this._refPlayer = this._refEntity as OrangeConsoleCharacter;
         }
@@ -84,12 +82,7 @@ namespace DmcCollabRestored.Character
 
         public override void OverrideDelegateEvent()
         {
-            //base.OverrideDelegateEvent();
-            this._refEntity.CheckSkillEvt = (Callback)(new System.Action(this.CheckSkill));
-            this._refEntity.ClearSkillEvt = (Callback)(new System.Action(this.ClearSkill));
-            this._refEntity.PlayerPressSkillCharacterCallCB = (CallbackIdx)(new System.Action<int>(this.PlayerPressSkillCharacterCall));
-            this._refEntity.PlayerReleaseSkillCharacterCallCB = (CallbackIdx)(new System.Action<int>(this.PlayerReleaseSkillCharacterCall));
-            this._refEntity.CanPlayerPressSkillFunc = new System.Func<int, bool>(this.CanPlayerPressSkill);
+            this.CallBase<CharacterControlBase>("OverrideDelegateEvent");
 
             this._refEntity.SetStatusCharacterDependEvt = new System.Action<OrangeCharacter.MainStatus, OrangeCharacter.SubStatus>(this.SetStatusCharacterDepend);
             this._refEntity.PlayTeleportOutEffectEvt = (Callback)(new System.Action(this.PlayTeleportOutEffect));
@@ -109,15 +102,6 @@ namespace DmcCollabRestored.Character
                 vector = this._refEntity.AimPosition;
             }
             Tangerine.Utils.Il2CppHelpers.FxManagerPlay("FX_TELEPORT_OUT", vector, Quaternion.identity);
-        }
-
-        // ILogicUpdate
-        public void LogicUpdate()
-        {
-            if (this.isInit)
-            {
-                this.CheckFrenzyBuff();
-            }
         }
 
         private void CheckFrenzyBuff()
@@ -516,7 +500,7 @@ namespace DmcCollabRestored.Character
 
         public override void SetStun(bool enable)
         {
-            //base.SetStun(enable);
+            this.CallBase<CharacterControlBase, System.Action<bool>>("SetStun");
 
             this.ToggleSaber(false, true);
             this.ToggleGun(false);

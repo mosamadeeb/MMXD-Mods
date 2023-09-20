@@ -1,39 +1,36 @@
 using CallbackDefs;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppSystem;
+using Tangerine.Patchers.LogicUpdate;
+using Tangerine.Utils;
 using UnityEngine;
 
 namespace DmcCollabRestored.Character
 {
-    // Implements ILogicUpdate interface
-    public class CH141_Controller : CharacterControlBase
+    public class CH141_Controller : CharacterControlBase, ITangerineLogicUpdate
     {
-        private ILogicUpdate _logicUpdateInstance = null;
+        public System.IntPtr LogicPointer => this.Pointer;
 
-        private ILogicUpdate _logicUpdate
+        public void LogicUpdate()
         {
-            get
+            if (this.isInit)
             {
-                _logicUpdateInstance ??= new(this.Pointer);
-                return _logicUpdateInstance;
+                this.CheckFrenzyBuff();
             }
         }
 
         private void OnEnable()
         {
-            MonoBehaviourSingleton<GameLogicUpdateManager>.Instance.AddUpdate(_logicUpdate);
+            TangerineLogicUpdateManager.AddUpdate(this);
         }
 
         private void OnDisable()
         {
-            MonoBehaviourSingleton<GameLogicUpdateManager>.Instance.RemoveUpdate(_logicUpdate);
+            TangerineLogicUpdateManager.RemoveUpdate(this);
         }
 
         public override void Start()
         {
-            //base.Start();
-            this.LinkEntityReference();
-
+            this.CallBase<CharacterControlBase>("Start");
             this.InitializeSkill();
         }
 
@@ -78,12 +75,7 @@ namespace DmcCollabRestored.Character
 
         public override void OverrideDelegateEvent()
         {
-            //base.OverrideDelegateEvent();
-            this._refEntity.CheckSkillEvt = (Callback)(new System.Action(this.CheckSkill));
-            this._refEntity.ClearSkillEvt = (Callback)(new System.Action(this.ClearSkill));
-            this._refEntity.PlayerPressSkillCharacterCallCB = (CallbackIdx)(new System.Action<int>(this.PlayerPressSkillCharacterCall));
-            this._refEntity.PlayerReleaseSkillCharacterCallCB = (CallbackIdx)(new System.Action<int>(this.PlayerReleaseSkillCharacterCall));
-            this._refEntity.CanPlayerPressSkillFunc = new System.Func<int, bool>(this.CanPlayerPressSkill);
+            this.CallBase<CharacterControlBase>("OverrideDelegateEvent");
 
             this._refEntity.SetStatusCharacterDependEvt = new System.Action<OrangeCharacter.MainStatus, OrangeCharacter.SubStatus>(this.SetStatusCharacterDepend);
             this._refEntity.PlayTeleportOutEffectEvt = (Callback)new System.Action(this.PlayTeleportOutEffect);
@@ -117,14 +109,6 @@ namespace DmcCollabRestored.Character
             if (this.cmSaberSide)
             {
                 this.cmSaberSide.Disappear(null, -1f);
-            }
-        }
-
-        public void LogicUpdate()
-        {
-            if (this.isInit)
-            {
-                this.CheckFrenzyBuff();
             }
         }
 
@@ -372,7 +356,7 @@ namespace DmcCollabRestored.Character
             }
             if (this._targetPos != null)
             {
-                int num = Math.Sign((this._targetPos.Value - this._refEntity.AimPosition).normalized.x);
+                int num = System.Math.Sign((this._targetPos.Value - this._refEntity.AimPosition).normalized.x);
                 this._refEntity.direction = ((num != 0) ? num : this._refEntity.direction);
             }
             Tangerine.Utils.Il2CppHelpers.FxManagerPlay(this.FX_1_00, this._refEntity.ModelTransform.position, OrangeCharacter.NormalQuaternion);
@@ -519,7 +503,7 @@ namespace DmcCollabRestored.Character
             }
         }
 
-        private void PushLinkSkl(SKILL_TABLE bulletData, Vector3 shootPosition, Nullable_Unboxed<Vector3> ShotDir = default(Nullable_Unboxed<Vector3>))
+        private void PushLinkSkl(SKILL_TABLE bulletData, Vector3 shootPosition, Il2CppSystem.Nullable_Unboxed<Vector3> ShotDir = default(Il2CppSystem.Nullable_Unboxed<Vector3>))
         {
             WeaponStruct currentSkillObj = this._refEntity.GetCurrentSkillObj();
             this._refEntity.PushBulletDetail(bulletData, currentSkillObj.weaponStatus, shootPosition, currentSkillObj.SkillLV, ShotDir);
@@ -601,7 +585,7 @@ namespace DmcCollabRestored.Character
 
         public override void SetStun(bool enable)
         {
-            //base.SetStun(enable);
+            this.CallBase<CharacterControlBase, System.Action<bool>>("SetStun");
 
             this.ToggleSaber(false);
             this.ToggleSideSaber(true);
@@ -660,6 +644,7 @@ namespace DmcCollabRestored.Character
 
         private CharacterMaterial cmSaberSide;
 
+        // This does not have to be changed to Nullable_Unboxed<Vector3> since it is never passed to the Il2Cpp side
         private Vector3? _targetPos;
 
         private bool _isTeleporation;
