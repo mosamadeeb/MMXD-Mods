@@ -2,6 +2,7 @@
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using System;
+using System.Collections.Generic;
 using Tangerine.Manager;
 
 namespace Tangerine.Patchers
@@ -9,6 +10,8 @@ namespace Tangerine.Patchers
     public class TangerineCharacter
     {
         internal static readonly ModDictionary<int, Type> CharacterDict = new();
+        private static readonly List<(Type, Type[])> _initialControllerList = new();
+        private static bool _orangeConstInitialized = false;
 
         internal static void InitializeHarmony(Harmony harmony)
         {
@@ -21,18 +24,15 @@ namespace Tangerine.Patchers
             _modGuid = modGuid;
         }
 
-        /// <summary>
-        /// Adds a controller class by injecting it into the game's runtime
-        /// </summary>
-        /// <param name="characterId"><c>n_ID</c> of the character that will use this controller</param>
-        /// <param name="controllerType"><see langword="typeof"/> the controller class</param>
-        /// <param name="interfaces">Interfaces the class should implement (e.g. <see cref="ILogicUpdate"/>)</param>
-        public void AddController(int characterId, Type controllerType, Type[] interfaces)
+        private static void RegisterController(Type controllerType, Type[] interfaces)
         {
-            // Throw an exception if a controller with the same ID is already registered
-            CharacterDict.Set(_modGuid, characterId, controllerType);
-
-            if (!ClassInjector.IsTypeRegisteredInIl2Cpp(controllerType))
+            if (!_orangeConstInitialized)
+            {
+                // Delay registration until OrangeConst is initialized
+                // Prevents an issue where OrangeCharacter's static fields are initialized before OrangeConst is
+                _initialControllerList.Add((controllerType, interfaces));
+            }
+            else if (!ClassInjector.IsTypeRegisteredInIl2Cpp(controllerType))
             {
                 Plugin.Log.LogWarning($"Registering character controller: {controllerType.FullName}");
 
@@ -43,6 +43,18 @@ namespace Tangerine.Patchers
 
                 ClassInjector.RegisterTypeInIl2Cpp(controllerType, options);
             }
+        }
+
+        /// <summary>
+        /// Adds a controller class by injecting it into the game's runtime
+        /// </summary>
+        /// <param name="characterId"><c>n_ID</c> of the character that will use this controller</param>
+        /// <param name="controllerType"><see langword="typeof"/> the controller class</param>
+        /// <param name="interfaces">Interfaces the class should implement (e.g. <see cref="ILogicUpdate"/>)</param>
+        public void AddController(int characterId, Type controllerType, Type[] interfaces)
+        {
+            CharacterDict.Set(_modGuid, characterId, controllerType);
+            RegisterController(controllerType, interfaces);
 
             // Example of injecting an enum value. This is not needed as the game can cast the values itself
             // EnumInjector.InjectEnumValues<EControlCharacter>(new Dictionary<string, object>() { { "X_DMC", 139 } });
@@ -71,6 +83,22 @@ namespace Tangerine.Patchers
             }
 
             return true;
+        }
+
+        [HarmonyPatch(typeof(OrangeConst), nameof(OrangeConst.ConstInit))]
+        [HarmonyPostfix]
+        private static void OrangeConstInitPostfix()
+        {
+            if (!_orangeConstInitialized)
+            {
+                _orangeConstInitialized = true;
+                foreach (var args in _initialControllerList)
+                {
+                    RegisterController(args.Item1, args.Item2);
+                }
+
+                _initialControllerList.Clear();
+            }
         }
     }
 }
