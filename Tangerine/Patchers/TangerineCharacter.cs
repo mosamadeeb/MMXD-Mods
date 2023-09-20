@@ -4,6 +4,7 @@ using Il2CppInterop.Runtime.Injection;
 using System;
 using System.Collections.Generic;
 using Tangerine.Manager;
+using Tangerine.Patchers.LogicUpdate;
 
 namespace Tangerine.Patchers
 {
@@ -24,7 +25,7 @@ namespace Tangerine.Patchers
             _modGuid = modGuid;
         }
 
-        private static void RegisterController(Type controllerType, Type[] interfaces)
+        private static void RegisterController(Type controllerType, Type[] interfaces = null)
         {
             if (!_orangeConstInitialized)
             {
@@ -35,6 +36,13 @@ namespace Tangerine.Patchers
             else if (!ClassInjector.IsTypeRegisteredInIl2Cpp(controllerType))
             {
                 Plugin.Log.LogWarning($"Registering character controller: {controllerType.FullName}");
+
+                interfaces ??= Array.Empty<Type>();
+                if (typeof(ITangerineLogicUpdate).IsAssignableFrom(controllerType))
+                {
+                    // Add ILogicUpdate to list of interfaces
+                    interfaces = interfaces.AddToArray(typeof(ILogicUpdate));
+                }
 
                 var options = new RegisterTypeOptions()
                 {
@@ -51,7 +59,7 @@ namespace Tangerine.Patchers
         /// <param name="characterId"><c>n_ID</c> of the character that will use this controller</param>
         /// <param name="controllerType"><see langword="typeof"/> the controller class</param>
         /// <param name="interfaces">Interfaces the class should implement (e.g. <see cref="ILogicUpdate"/>)</param>
-        public void AddController(int characterId, Type controllerType, Type[] interfaces)
+        public void AddController(int characterId, Type controllerType, Type[] interfaces = null)
         {
             CharacterDict.Set(_modGuid, characterId, controllerType);
             RegisterController(controllerType, interfaces);

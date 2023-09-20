@@ -38,52 +38,52 @@
     <Reference Include="Assembly-CSharp" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
+    <Reference Include="Assembly-CSharp-firstpass" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="ACTk.Runtime">
+    <Reference Include="ACTk.Runtime" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\ACTk.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="CapCommon">
+    <Reference Include="CapCommon" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\CapCommon.dll</HintPath>
     </Reference>
-    <Reference Include="Cinemachine">
+    <Reference Include="Cinemachine" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\Cinemachine.dll</HintPath>
     </Reference>
-    <Reference Include="Coffee.SoftMaskForUGUI">
+    <Reference Include="Coffee.SoftMaskForUGUI" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\Coffee.SoftMaskForUGUI.dll</HintPath>
     </Reference>
-    <Reference Include="Coffee.UIParticle">
+    <Reference Include="Coffee.UIParticle" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\Coffee.UIParticle.dll</HintPath>
     </Reference>
-    <Reference Include="ConsoleService">
+    <Reference Include="ConsoleService" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\ConsoleService.dll</HintPath>
     </Reference>
-    <Reference Include="CriMw.CriWare.Runtime">
+    <Reference Include="CriMw.CriWare.Runtime" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\CriMw.CriWare.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="DataProvider">
+    <Reference Include="DataProvider" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\DataProvider.dll</HintPath>
     </Reference>
-    <Reference Include="Facepunch.Steamworks.Win64">
+    <Reference Include="Facepunch.Steamworks.Win64" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\Facepunch.Steamworks.Win64.dll</HintPath>
     </Reference>
-    <Reference Include="JsonFx.Json">
+    <Reference Include="JsonFx.Json" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\JsonFx.Json.dll</HintPath>
     </Reference>
-    <Reference Include="LZ4">
+    <Reference Include="LZ4" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\LZ4.dll</HintPath>
     </Reference>
-    <Reference Include="NaughtyAttributes.Core">
+    <Reference Include="NaughtyAttributes.Core" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\NaughtyAttributes.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="Newtonsoft.Json" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="PathCreator">
+    <Reference Include="PathCreator" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\PathCreator.dll</HintPath>
     </Reference>
-    <Reference Include="ProtocolWeb">
+    <Reference Include="ProtocolWeb" Publicize="true">
       <HintPath>$(mmxd_game_path)\BepInEx\interop\ProtocolWeb.dll</HintPath>
     </Reference>
     
