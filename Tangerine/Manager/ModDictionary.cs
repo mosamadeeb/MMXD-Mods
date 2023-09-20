@@ -5,22 +5,22 @@ using System.Linq;
 namespace Tangerine.Manager
 {
     /// <summary>
-    /// 
+    /// Type of change in the base dictionary
     /// </summary>
     internal enum BaseChangeType
     {
         /// <summary>
-        /// 
+        /// An element was added
         /// </summary>
         Add,
 
         /// <summary>
-        /// 
+        /// An element was removed
         /// </summary>
         Remove,
 
         /// <summary>
-        /// 
+        /// An element was updated
         /// </summary>
         Update,
     }
@@ -232,6 +232,9 @@ namespace Tangerine.Manager
         /// </summary>
         public event Action<TKey, BaseChangeType> BaseChangedEvent;
 
+        /// <summary>
+        /// Event handler for when Base has a change to multiple elements (to apply patches in game's dict etc)
+        /// </summary>
         public event Action<IEnumerable<(TKey, BaseChangeType)>> BaseMultiChangedEvent;
 
         /// <summary>

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Tangerine.Patchers.LogicUpdate
 {
+    /// <summary>
+    /// Contains methods that allow using <see cref="GameLogicUpdateManager"/> without inheriting from <see cref="ILogicUpdate"/>
+    /// </summary>
     public static class TangerineLogicUpdateManager
     {
         private readonly static Dictionary<IntPtr, ILogicUpdate> _logicDict = new();
@@ -18,28 +21,28 @@ namespace Tangerine.Patchers.LogicUpdate
         }
 
         /// <summary>
-        /// 
+        /// Calls <see cref="GameLogicUpdateManager.AddUpdate(ILogicUpdate)"/>
         /// </summary>
-        /// <param name="logicUpdate"></param>
+        /// <param name="logicUpdate">Object registered in Il2Cpp that has an implementation of <see cref="ITangerineLogicUpdate.LogicUpdate"/></param>
         public static void AddUpdate(ITangerineLogicUpdate logicUpdate)
         {
             GameLogicUpdateManager.Instance.AddUpdate(GetOrAddLogic(logicUpdate));
         }
 
         /// <summary>
-        /// 
+        /// Calls <see cref="GameLogicUpdateManager.CheckUpdateContain(ILogicUpdate)"/>
         /// </summary>
-        /// <param name="logicUpdate"></param>
-        /// <returns></returns>
+        /// <inheritdoc cref="AddUpdate(ITangerineLogicUpdate)"/>
+        /// <returns>The result of the method call</returns>
         public static bool CheckUpdateContain(ITangerineLogicUpdate logicUpdate)
         {
             return GameLogicUpdateManager.Instance.CheckUpdateContain(GetOrAddLogic(logicUpdate));
         }
 
         /// <summary>
-        /// 
+        /// Calls <see cref="GameLogicUpdateManager.RemoveUpdate(ILogicUpdate)"/>
         /// </summary>
-        /// <param name="logicUpdate"></param>
+        /// <inheritdoc cref="AddUpdate(ITangerineLogicUpdate)"/>
         public static void RemoveUpdate(ITangerineLogicUpdate logicUpdate)
         {
             GameLogicUpdateManager.Instance.RemoveUpdate(GetOrAddLogic(logicUpdate));

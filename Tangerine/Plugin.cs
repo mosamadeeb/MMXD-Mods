@@ -8,6 +8,7 @@ using Tangerine.Patchers.DataProvider;
 
 namespace Tangerine;
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 [BepInPlugin(GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 public class Plugin : BasePlugin
 {

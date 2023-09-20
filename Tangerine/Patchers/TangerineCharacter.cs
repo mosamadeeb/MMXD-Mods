@@ -3,11 +3,15 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Tangerine.Manager;
 using Tangerine.Patchers.LogicUpdate;
 
 namespace Tangerine.Patchers
 {
+    /// <summary>
+    /// Contains methods for adding character controller classes that inherit from <see cref="CharacterControlBase"/>
+    /// </summary>
     public class TangerineCharacter
     {
         internal static readonly ModDictionary<int, Type> CharacterDict = new();
@@ -38,7 +42,8 @@ namespace Tangerine.Patchers
                 Plugin.Log.LogWarning($"Registering character controller: {controllerType.FullName}");
 
                 interfaces ??= Array.Empty<Type>();
-                if (typeof(ITangerineLogicUpdate).IsAssignableFrom(controllerType))
+                if (typeof(ITangerineLogicUpdate).IsAssignableFrom(controllerType)
+                    && !interfaces.Contains(typeof(ILogicUpdate)))
                 {
                     // Add ILogicUpdate to list of interfaces
                     interfaces = interfaces.AddToArray(typeof(ILogicUpdate));
@@ -58,7 +63,7 @@ namespace Tangerine.Patchers
         /// </summary>
         /// <param name="characterId"><c>n_ID</c> of the character that will use this controller</param>
         /// <param name="controllerType"><see langword="typeof"/> the controller class</param>
-        /// <param name="interfaces">Interfaces the class should implement (e.g. <see cref="ILogicUpdate"/>)</param>
+        /// <param name="interfaces">Il2Cpp interfaces the class should implement, if any (e.g. <see cref="ILogicUpdate"/>)</param>
         public void AddController(int characterId, Type controllerType, Type[] interfaces = null)
         {
             CharacterDict.Set(_modGuid, characterId, controllerType);
@@ -69,10 +74,10 @@ namespace Tangerine.Patchers
         }
 
         /// <summary>
-        /// 
+        /// Removes a controller so it will not be loaded by the game.
         /// </summary>
-        /// <param name="characterId"></param>
-        /// <returns></returns>
+        /// <param name="characterId"><c>n_ID</c> of the character that the controller was added for</param>
+        /// <returns><see langword="true"/> if the controller was successfully removed; otherwise <see langword="false"/></returns>
         public bool RemoveController(int characterId)
         {
             // We can't unregister controllers, so all we can do is stop overriding the character id

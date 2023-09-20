@@ -7,6 +7,9 @@ using System.Reflection;
 
 namespace Tangerine.Patchers.DataProvider
 {
+    /// <summary>
+    /// Contains methods for patching table dictionaries stored in <see cref="OrangeDataManager"/>
+    /// </summary>
     public class TangerineDataManager
     {
         internal static readonly DataProviderBase<int, Il2CppSystem.Object> Provider = new(OrangeDataManager.Instance);

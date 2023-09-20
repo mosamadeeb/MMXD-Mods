@@ -13,6 +13,7 @@
       https://nuget.samboy.dev/v3/index.json
     </RestoreAdditionalProjectSources>
     <RootNamespace>Tangerine</RootNamespace>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,7 +31,7 @@
 
   <!-- Remove this element if you do not want DLLs to be copied to \BepInEx\plugins folder after building -->
   <Target Name="CopyDLLs" AfterTargets="Build">
-    <Copy SourceFiles="$(TargetDir)$(ProjectName).dll;$(TargetDir)$(ProjectName).pdb" DestinationFolder="$(mmxd_game_path)\BepInEx\plugins\$(AssemblyName)" />
+    <Copy SourceFiles="$(TargetDir)$(ProjectName).dll;$(TargetDir)$(ProjectName).pdb;$(TargetDir)$(ProjectName).xml;$(TargetDir)$(ProjectName).deps.json" DestinationFolder="$(mmxd_game_path)\BepInEx\plugins\$(AssemblyName)" />
   </Target>
 
   <ItemGroup>

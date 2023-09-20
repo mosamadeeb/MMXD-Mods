@@ -6,6 +6,9 @@ using Tangerine.Manager.Mod;
 
 namespace Tangerine.Manager
 {
+    /// <summary>
+    /// Provides info about the current load order of mods
+    /// </summary>
     public static class ModManager
     {
         internal static ModManagerBehaviour Behaviour = null;
@@ -19,57 +22,57 @@ namespace Tangerine.Manager
         }
 
         /// <summary>
-        /// 
+        /// Gets the IDs of enabled mods that are overridden by the given mod
         /// </summary>
-        /// <param name="currentMod"></param>
-        /// <returns></returns>
-        public static IEnumerable<string> GetEnabledModsLowerThan(string currentMod)
+        /// <param name="mod">Mod ID to check against</param>
+        /// <returns>List of enabled mods that that are lower than the given mod</returns>
+        public static IEnumerable<string> GetEnabledModsLowerThan(string mod)
         {
-            var i = Mods.FindIndex(mod => mod.Id == currentMod);
+            var i = Mods.FindIndex(info => info.Id == mod);
             return ((i != -1) ? Mods.GetRange(0, i) : Mods).Where(info => info.IsEnabled).Select(info => info.Id);
         }
 
         /// <summary>
-        /// 
+        /// Gets the IDs of enabled mods
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of enabled mods</returns>
         public static IEnumerable<string> GetEnabledMods()
         {
             return Mods.Where(info => info.IsEnabled).Select(info => info.Id);
         }
 
         /// <summary>
-        /// 
+        /// Gets the IDs of disabled mods
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of disabled mods</returns>
         public static IEnumerable<string> GetDisabledMods()
         {
             return Mods.Where(info => !info.IsEnabled).Select(info => info.Id);
         }
 
         /// <summary>
-        /// 
+        /// Checks if a mod exists in the load order
         /// </summary>
-        /// <param name="guid"></param>
-        /// <returns></returns>
-        public static bool ModExists(string guid)
+        /// <param name="id">ID of the mod</param>
+        /// <returns><see langword="true"/> if a mod with the given id exists; otherwise <see langword="false"/></returns>
+        public static bool ModExists(string id)
         {
-            return Mods.Any(info => info.Id == guid);
+            return Mods.Any(info => info.Id == id);
         }
 
         /// <summary>
-        /// 
+        /// Checks if a mod exists in the load order and is enabled
         /// </summary>
-        /// <param name="guid"></param>
-        /// <returns></returns>
-        public static bool ModEnabled(string guid)
+        /// <param name="id">ID of the mod</param>
+        /// <returns><see langword="true"/> if a mod with the given id is enabled; otherwise <see langword="false"/></returns>
+        public static bool ModEnabled(string id)
         {
-            return Mods.Any(info => info.Id == guid && info.IsEnabled);
+            return Mods.Any(info => info.Id == id && info.IsEnabled);
         }
 
-        internal static bool EnableMod(string guid)
+        internal static bool EnableMod(string id)
         {
-            var mod = LoadedMods.Find(m => m.Id == guid);
+            var mod = LoadedMods.Find(m => m.Id == id);
 
             if (mod != null)
             {
@@ -81,9 +84,9 @@ namespace Tangerine.Manager
             return false;
         }
 
-        internal static bool DisableMod(string guid, string reason = null)
+        internal static bool DisableMod(string id, string reason = null)
         {
-            var mod = Mods.Find(info => info.Id == guid);
+            var mod = Mods.Find(info => info.Id == id);
 
             if (mod != null)
             {
@@ -96,9 +99,9 @@ namespace Tangerine.Manager
             return false;
         }
 
-        internal static bool ReloadMod(string guid)
+        internal static bool ReloadMod(string id)
         {
-            return DisableMod(guid) && EnableMod(guid);
+            return DisableMod(id) && EnableMod(id);
         }
 
         internal static void Initialize(Plugin instance)

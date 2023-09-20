@@ -6,6 +6,9 @@ using Tangerine.Manager;
 
 namespace Tangerine.Patchers
 {
+    /// <summary>
+    /// Contains methods for adding and updating asset bundles, files, and remapping assets to different bundles
+    /// </summary>
     public class TangerineLoader
     {
         private static Harmony _harmony;
@@ -36,47 +39,6 @@ namespace Tangerine.Patchers
         internal TangerineLoader(string modGuid)
         {
             _modGuid = modGuid;
-        }
-
-        /// <summary>
-        /// Adds an Asset Bundle to the game's dictionary to allow it to be loaded from a custom path.
-        /// Asset bundles existing in the game will be overridden if a bundle with the same name is added.
-        /// </summary>
-        /// <param name="id">Id entry to add</param>
-        /// <param name="filePath">The path the file will be loaded from</param>
-        public void AddAssetBundleId(AssetbundleId id, string filePath)
-        {
-            id.SetKeys();
-            AssetBundleIds.Set(_modGuid, id.name, id);
-            AssetBundlePaths.Set(_modGuid, id.hash, filePath);
-
-            // No need to apply anything to the game here, as the event in the Base dictionary will do it
-        }
-
-        /// <param name="idDict"><c>Key: Value</c> mapping for <see cref="AssetbundleId"/></param>
-        /// <inheritdoc cref="AddAssetBundleId(AssetbundleId, string)"/>
-        public void AddAssetBundleId(Dictionary<string, object> idDict, string filePath)
-        {
-            AddAssetBundleId(CreateAssetbundleIdFromDict(idDict), filePath);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public bool RemoveAssetBundleId(string name)
-        {
-            if (AssetBundleIds.TryGetValue(_modGuid, name, out var id))
-            {
-                AssetBundlePaths.Remove(_modGuid, id.hash);
-                AssetBundleIds.Remove(_modGuid, name);
-
-                // No need to apply anything to the game here, as the event in the Base dictionary will do it
-                return true;
-            }
-
-            return false;
         }
 
         private static void ApplyBundlePatch(string name, BaseChangeType changeType)
@@ -151,6 +113,48 @@ namespace Tangerine.Patchers
         }
 
         /// <summary>
+        /// Adds an Asset Bundle to the game's dictionary to allow it to be loaded from a custom path.
+        /// Asset bundles existing in the game will be overridden if a bundle with the same name is added.
+        /// </summary>
+        /// <param name="id">Id entry to add</param>
+        /// <param name="filePath">The path the file will be loaded from</param>
+        public void AddAssetBundleId(AssetbundleId id, string filePath)
+        {
+            id.SetKeys();
+            AssetBundleIds.Set(_modGuid, id.name, id);
+            AssetBundlePaths.Set(_modGuid, id.hash, filePath);
+
+            // No need to apply anything to the game here, as the event in the Base dictionary will do it
+        }
+
+        /// <param name="idDict"><c>Key: Value</c> mapping for <see cref="AssetbundleId"/></param>
+        /// <inheritdoc cref="AddAssetBundleId(AssetbundleId, string)"/>
+        public void AddAssetBundleId(Dictionary<string, object> idDict, string filePath)
+        {
+            AddAssetBundleId(CreateAssetbundleIdFromDict(idDict), filePath);
+        }
+
+        /// <summary>
+        /// Removes an <see cref="AssetbundleId"/> entry that was added before.
+        /// Will restore original entry if it exists.
+        /// </summary>
+        /// <param name="name">Name of the <see cref="AssetbundleId"/> that was added</param>
+        /// <returns><see langword="true"/> if the <see cref="AssetbundleId"/> was successfully removed; otherwise <see langword="false"/></returns>
+        public bool RemoveAssetBundleId(string name)
+        {
+            if (AssetBundleIds.TryGetValue(_modGuid, name, out var id))
+            {
+                AssetBundlePaths.Remove(_modGuid, id.hash);
+                AssetBundleIds.Remove(_modGuid, name);
+
+                // No need to apply anything to the game here, as the event in the Base dictionary will do it
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Adds a file hash to be loaded from a custom path when the game asks for the file.
         /// This method is for adding files that are not asset bundles, like <c>.acb</c> files.
         /// Use <see cref="AddAssetBundleId(AssetbundleId, string)"/> for adding asset bundles.
@@ -166,7 +170,8 @@ namespace Tangerine.Patchers
         /// 
         /// </summary>
         /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <returns><see langword="true"/> if the file mapping was successfully removed; otherwise <see langword="false"/></returns>
+        /// <inheritdoc cref="AddFile(string, string)"/>
         public bool RemoveFile(string hash)
         {
             return FilePaths.Remove(_modGuid, hash);
@@ -185,11 +190,10 @@ namespace Tangerine.Patchers
         }
 
         /// <summary>
-        /// 
+        /// Removes a remapping that was added before
         /// </summary>
-        /// <param name="oldBundleName"></param>
-        /// <param name="oldAssetName"></param>
-        /// <returns></returns>
+        /// <returns><see langword="true"/> if the remapping was successfully removed; otherwise <see langword="false"/></returns>
+        /// <inheritdoc cref="RemapAsset(string, string, string, string)"/>
         public bool RemoveRemapping(string oldBundleName, string oldAssetName)
         {
             return AssetRemapping.Remove(_modGuid, (oldBundleName, oldAssetName));
@@ -216,7 +220,7 @@ namespace Tangerine.Patchers
 
         [HarmonyPatch(typeof(AssetsBundleManager), nameof(AssetsBundleManager.OnStartLoadSingleAsset))]
         [HarmonyPostfix]
-        public static void AddAssetbundleIdsPatch(AssetsBundleManager __instance, MethodBase __originalMethod)
+        private static void AddAssetbundleIdsPatch(AssetsBundleManager __instance, MethodBase __originalMethod)
         {
             // This will override existing bundle ids in the manager's dict
             foreach (var id in AssetBundleIds.Base.Values)
@@ -244,8 +248,7 @@ namespace Tangerine.Patchers
         [HarmonyPostfix]
         private static void GetPathPostfix(string file, ref string __result)
         {
-            string filePath;
-            if (AssetBundlePaths.Base.TryGetValue(file, out filePath) || FilePaths.Base.TryGetValue(file, out filePath))
+            if (AssetBundlePaths.Base.TryGetValue(file, out string filePath) || FilePaths.Base.TryGetValue(file, out filePath))
             {
                 // Update file path
                 __result = filePath;

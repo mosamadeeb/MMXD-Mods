@@ -7,6 +7,9 @@ using System.Reflection;
 
 namespace Tangerine.Patchers.DataProvider
 {
+    /// <summary>
+    /// Contains methods for patching localization table dictionaries stored in <see cref="OrangeTextDataManager"/>
+    /// </summary>
     public class TangerineTextDataManager
     {
         internal static readonly DataProviderBase<string, LOCALIZATION_TABLE> Provider = new(OrangeTextDataManager.Instance);

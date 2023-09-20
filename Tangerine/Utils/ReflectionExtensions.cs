@@ -14,6 +14,11 @@ using Object = Il2CppSystem.Object;
 
 namespace Tangerine.Utils
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+    /// <summary>
+    /// Taken from <see href="https://github.com/Jrprogrammer/CoreLib/blob/256d06979bdb34f450519c2d7629e23c52e74dbc/CoreLib/Util/Extensions/Reflection.cs">CoreLib</see>
+    /// </summary>
     public static class ReflectionExtensions
     {
 

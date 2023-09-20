@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace Tangerine.Utils
 {
+    /// <summary>
+    /// Provides helper methods for bypassing various Il2Cpp gimmicks with the game.
+    /// </summary>
     public static class Il2CppHelpers
     {
         /// <summary>
