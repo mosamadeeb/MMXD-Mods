@@ -24,8 +24,10 @@ namespace Tangerine.Manager
         internal static readonly string ModsDir = Path.Combine(BepInEx.Paths.BepInExRootPath, "mods");
         internal static readonly string LoadOrderPath = Path.Combine(Plugin.Location, ModLoadOrderFile);
 
-        internal static List<LoadOrderEntry> ReadLoadOrder()
+        internal static IEnumerable<LoadOrderEntry> ReadLoadOrder()
         {
+            Plugin.Log.LogMessage($"Loading {ModLoadOrderFile}");
+
             if (File.Exists(LoadOrderPath))
             {
                 try
@@ -52,12 +54,23 @@ namespace Tangerine.Manager
             return null;
         }
 
-        internal static void SaveLoadOrder(List<LoadOrderEntry> mods)
+        internal static void SaveLoadOrder(IEnumerable<LoadOrderEntry> loadOrder)
         {
+            Plugin.Log.LogMessage($"Saving {ModLoadOrderFile}");
+
             try
             {
-                // TODO: rewrite this
-                File.WriteAllText(LoadOrderPath, JsonSerializer.Serialize(mods));
+                var loadOrderDict = new List<Dictionary<string, object>>();
+                foreach (var entry in loadOrder)
+                {
+                    loadOrderDict.Add(new Dictionary<string, object>()
+                    {
+                        { "name",  entry.name},
+                        { "enabled", entry.enabled },
+                    });
+                }
+
+                File.WriteAllText(LoadOrderPath, JsonSerializer.Serialize(loadOrderDict, new JsonSerializerOptions() { WriteIndented = true }));
             }
             catch (Exception e)
             {
@@ -65,7 +78,7 @@ namespace Tangerine.Manager
             }
         }
 
-        internal static List<TangerineMod> PreloadMods()
+        internal static IEnumerable<TangerineMod> PreloadMods()
         {
             var loadedFolders = new HashSet<string>();
             var mods = new List<TangerineMod>();
@@ -104,6 +117,7 @@ namespace Tangerine.Manager
 
                     if (disabledMods == null || !disabledMods.Contains(mod.Id))
                     {
+                        mod.Info.IsEnabled = true;
                         LoadMod(mod);
                     }
                 }
@@ -113,6 +127,8 @@ namespace Tangerine.Manager
             {
                 Plugin.Log.LogWarning($"No mods were loaded!");
             }
+
+            SaveLoadOrder(mods.Select(m => new LoadOrderEntry() { name = m.Id, enabled = m.Info.IsEnabled }));
 
             return mods;
         }
@@ -172,9 +188,9 @@ namespace Tangerine.Manager
             }
         }
 
-        public static void UnloadMod(ModInfo info)
+        public static void UnloadMod(TangerineMod mod)
         {
-            var id = info.Id;
+            var id = mod.Info.Id;
 
             TangerineCharacter.CharacterDict.OnModDisabled(id);
 

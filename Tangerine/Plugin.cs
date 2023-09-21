@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
+using System.IO;
 using Tangerine.Manager;
 using Tangerine.Patchers;
 using Tangerine.Patchers.DataProvider;
@@ -30,7 +31,7 @@ public class Plugin : BasePlugin
         Log.LogInfo($"Tangerine is loaded!");
 
         // Get folder
-        Location = IL2CPPChainloader.Instance.Plugins[GUID].Location;
+        Location = Path.GetDirectoryName(IL2CPPChainloader.Instance.Plugins[GUID].Location);
 
         _harmony = new Harmony(GUID);
         TangerineDataManager.InitializeHarmony(_harmony);

@@ -33,7 +33,7 @@ namespace Tangerine.Utils
         {
             var defaultResolver = new DefaultAssemblyResolver();
             defaultResolver.AddSearchDirectory(ModLoader.ModsDir);
-            defaultResolver.AddSearchDirectory(Path.GetDirectoryName(Plugin.Location));
+            defaultResolver.AddSearchDirectory(Plugin.Location);
             defaultResolver.AddSearchDirectory(BepInEx.Paths.ManagedPath);
             defaultResolver.AddSearchDirectory(BepInEx.Paths.BepInExAssemblyDirectory);
             Plugin.Log.Log(LogLevel.Info, $"Loading plugins from {path}");

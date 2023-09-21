@@ -75,7 +75,7 @@ namespace Tangerine.Manager
         {
             var mod = LoadedMods.Find(m => m.Id == id);
 
-            if (mod != null)
+            if (mod != null && !mod.Info.IsEnabled)
             {
                 mod.Info.IsEnabled = true;
                 ModLoader.LoadMod(mod);
@@ -87,12 +87,12 @@ namespace Tangerine.Manager
 
         internal static bool DisableMod(string id, string reason = null)
         {
-            var mod = Mods.Find(info => info.Id == id);
+            var mod = LoadedMods.Find(m => m.Id == id);
 
-            if (mod != null)
+            if (mod != null && mod.Info.IsEnabled)
             {
-                mod.IsEnabled = false;
-                mod.DisabledReason = reason;
+                mod.Info.IsEnabled = false;
+                mod.Info.DisabledReason = reason;
                 ModLoader.UnloadMod(mod);
                 return true;
             }
@@ -102,7 +102,7 @@ namespace Tangerine.Manager
 
         internal static bool ReloadMod(string id)
         {
-            return DisableMod(id) && EnableMod(id);
+            return ModEnabled(id) ? (DisableMod(id) && EnableMod(id)) : EnableMod(id);
         }
 
         internal static IEnumerable<string> GetModsToReload()

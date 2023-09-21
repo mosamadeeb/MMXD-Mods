@@ -41,7 +41,7 @@ namespace Tangerine.Manager.Mod
         public ModInfo(string id, JsonObject obj)
         {
             Id = id;
-            IsEnabled = true;
+            IsEnabled = false;
 
             Name = obj[nameof(Name)].Deserialize<string>();
             Author = obj[nameof(Author)].Deserialize<string>();
