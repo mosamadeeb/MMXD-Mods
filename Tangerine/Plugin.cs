@@ -1,4 +1,5 @@
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
@@ -14,6 +15,8 @@ public class Plugin : BasePlugin
 {
     internal static string Location;
     internal static new ManualLogSource Log;
+    internal static new ConfigFile Config;
+
     private static Harmony _harmony;
 
     public const string GUID = "0Tangerine";
@@ -22,6 +25,8 @@ public class Plugin : BasePlugin
     {
         // Plugin startup logic
         Plugin.Log = base.Log;
+        Plugin.Config = base.Config;
+
         Log.LogInfo($"Tangerine is loaded!");
 
         // Get folder

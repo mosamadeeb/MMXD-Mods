@@ -1,6 +1,7 @@
 ﻿using Il2CppInterop.Runtime.Injection;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Tangerine.Manager.Mod;
 
@@ -104,8 +105,15 @@ namespace Tangerine.Manager
             return DisableMod(id) && EnableMod(id);
         }
 
+        internal static IEnumerable<string> GetModsToReload()
+        {
+            return GetEnabledMods().Where(mod => File.Exists(Path.Combine(ModLoader.ModsDir, mod, ManagerConfig.ModReloadFile)));
+        }
+
         internal static void Initialize(Plugin instance)
         {
+            ManagerConfig.Initialize();
+
             ClassInjector.RegisterTypeInIl2Cpp<ModManagerBehaviour>();
             Behaviour = instance.AddComponent<ModManagerBehaviour>();
 

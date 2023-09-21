@@ -9,7 +9,14 @@ namespace Tangerine.Manager
 
         private void Update()
         {
-
+            if (Input.GetKeyDown(ManagerConfig.ReloadKey.Value))
+            {
+                foreach (var mod in ModManager.GetModsToReload())
+                {
+                    Plugin.Log.LogMessage($"Reloading mod: {mod}");
+                    ModManager.ReloadMod(mod);
+                }
+            }
         }
 
     }
