@@ -18,6 +18,7 @@ namespace Tangerine.Manager.Loaders
         }
 
         private const string JsonFile = "AssetRemap.json";
+        private const string AssetsFolder = "Assets";
 
         public static bool Load(string modPath, TangerineLoader loader)
         {
@@ -32,8 +33,15 @@ namespace Tangerine.Manager.Loaders
                     return false;
                 }
 
-                foreach (var remap in list.Select(DeserializeAssetRemap))
+                foreach (var assetRemap in list.Select(DeserializeAssetRemap))
                 {
+                    var remap = assetRemap;
+                    if (remap.newBundleName == string.Empty)
+                    {
+                        // Asset should be loaded from disk, so give it the full path now
+                        remap.newAssetName = Path.Combine(modPath, AssetsFolder, remap.newAssetName);
+                    }
+
                     // No concrete way of verifying the assets bundles exist before the vanilla abconfig is loaded
                     loader.RemapAsset(
                         remap.bundleName,

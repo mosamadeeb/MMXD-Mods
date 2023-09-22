@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Tangerine.Patchers;
-using static EventManager;
 
 namespace Tangerine.Manager.Loaders
 {
