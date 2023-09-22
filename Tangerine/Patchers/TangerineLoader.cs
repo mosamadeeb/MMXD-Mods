@@ -1,8 +1,11 @@
 using Fasterflect;
 using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Tangerine.Manager;
+using Tangerine.Patchers.Native;
+using UnityEngine;
 
 namespace Tangerine.Patchers
 {
@@ -204,13 +207,7 @@ namespace Tangerine.Patchers
             _harmony = harmony;
             _harmony.PatchAll(typeof(TangerineLoader));
 
-            _harmony.Patch(
-                typeof(AssetsBundleManager).Method(nameof(AssetsBundleManager.GetAssetAndAsyncLoad)).MakeGenericMethod(typeof(UnityEngine.Object)),
-                prefix: new HarmonyMethod(typeof(TangerineLoader).GetMethod(nameof(AsyncLoadAssetObjectPrefix), BindingFlags.NonPublic | BindingFlags.Static)));
-
-            _harmony.Patch(
-                typeof(AssetsBundleManager).Method(nameof(AssetsBundleManager.GetAssstSync)).MakeGenericMethod(typeof(UnityEngine.Object)),
-                prefix: new HarmonyMethod(typeof(TangerineLoader).GetMethod(nameof(LoadAssetPrefix), BindingFlags.NonPublic | BindingFlags.Static)));
+            Detour_LoadAsset.Patch();
         }
 
         private static AssetbundleId CreateAssetbundleIdFromDict(Dictionary<string, object> dict)
@@ -254,39 +251,6 @@ namespace Tangerine.Patchers
                 __result = filePath;
                 Plugin.Log.LogWarning($"Replaced path for file: ({__result})");
             }
-        }
-
-        private static void LoadAssetPrefix(ref string bundleName, ref string assetName)
-        {
-            if (AssetRemapping.Base.TryGetValue((bundleName, assetName), out var target))
-            {
-                Plugin.Log.LogWarning($"Remapped asset from [{bundleName}]{assetName} to [{target.Item1}]{target.Item2}");
-                bundleName = target.Item1;
-                assetName = target.Item2;
-            }
-        }
-
-        private static void AsyncLoadAssetObjectPrefix(ref string bundleName, ref string assetName)
-        {
-            if (AssetRemapping.Base.TryGetValue((bundleName, assetName), out var target))
-            {
-                Plugin.Log.LogWarning($"Remapped asset from [{bundleName}]{assetName} to [{target.Item1}]{target.Item2}");
-                bundleName = target.Item1;
-                assetName = target.Item2;
-            }
-
-            /*
-            // Example for updating callback
-            var p_cb_org = p_cb;
-
-            p_cb = (AssetsBundleManager.OnAsyncLoadAssetComplete<UnityEngine.Object>)
-                new Action<UnityEngine.Object>(
-                    (asset) =>
-                    {
-                        p_cb_org.Invoke(asset);
-                    }
-                );
-            */
         }
 
         [HarmonyPatch(typeof(AssetbundleId), nameof(AssetbundleId.SetKeys))]
