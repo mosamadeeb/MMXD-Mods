@@ -585,7 +585,8 @@ namespace DmcCollabRestored.Character
 
         public override void SetStun(bool enable)
         {
-            this.CallBase<CharacterControlBase, System.Action<bool>>("SetStun");
+            // base.SetStun is an empty virtual method, so we shouldn't call it
+            // this.CallBase<CharacterControlBase, System.Action<bool>>("SetStun");
 
             this.ToggleSaber(false);
             this.ToggleSideSaber(true);
