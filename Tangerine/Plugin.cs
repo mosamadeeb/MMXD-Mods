@@ -38,6 +38,7 @@ public class Plugin : BasePlugin
         TangerineTextDataManager.InitializeHarmony(_harmony);
         TangerineCharacter.InitializeHarmony(_harmony);
         TangerineLoader.InitializeHarmony(_harmony);
+        TangerineAudioManager.InitializeHarmony(_harmony);
 
         // Start loading mods
         ModManager.Initialize(this);
