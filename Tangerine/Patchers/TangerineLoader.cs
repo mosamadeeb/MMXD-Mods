@@ -210,6 +210,17 @@ namespace Tangerine.Patchers
             Detour_LoadAsset.Patch();
         }
 
+        internal static void PatchAssetbundleIds()
+        {
+            if (_assetsBundleManagerUnpatched)
+            {
+                _harmony.Patch(
+                    typeof(AssetsBundleManager).Method(nameof(AssetsBundleManager.OnStartLoadSingleAsset)),
+                    postfix: new HarmonyMethod(typeof(TangerineLoader), nameof(AddAssetbundleIdsPatch)));
+                _assetsBundleManagerUnpatched = false;
+            }
+        }
+
         private static AssetbundleId CreateAssetbundleIdFromDict(Dictionary<string, object> dict)
         {
             return new AssetbundleId((string)dict["name"], (string)dict["hash"], (uint)dict["crc"], (long)dict["size"]);
