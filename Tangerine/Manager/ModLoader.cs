@@ -78,7 +78,7 @@ namespace Tangerine.Manager
             }
         }
 
-        internal static IEnumerable<TangerineMod> PreloadMods()
+        internal static IEnumerator<TangerineMod> PreloadMods()
         {
             var loadedFolders = new HashSet<string>();
             var mods = new List<TangerineMod>();
@@ -120,6 +120,8 @@ namespace Tangerine.Manager
                         mod.Info.IsEnabled = true;
                         LoadMod(mod);
                     }
+
+                    yield return mod;
                 }
             }
 
@@ -130,7 +132,7 @@ namespace Tangerine.Manager
 
             SaveLoadOrder(mods.Select(m => new LoadOrderEntry() { name = m.Id, enabled = m.Info.IsEnabled }));
 
-            return mods;
+            yield break;
         }
 
         private static TangerineMod CreateMod(string folderName)

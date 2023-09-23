@@ -123,7 +123,13 @@ namespace Tangerine.Manager
             }
 
             LoadedMods.Clear();
-            LoadedMods.AddRange(ModLoader.PreloadMods());
+
+            var mods = ModLoader.PreloadMods();
+            while (mods.MoveNext())
+            {
+                // Add each mod right after it is loaded so the load order can apply
+                LoadedMods.Add(mods.Current);
+            }
         }
     }
 }
