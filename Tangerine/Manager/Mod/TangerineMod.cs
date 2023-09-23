@@ -29,6 +29,9 @@ namespace Tangerine.Manager.Mod
         /// <inheritdoc cref="TangerineLoader"/>
         public TangerineLoader Loader { get; }
 
+        /// <inheritdoc cref="TangerineConst"/>
+        public TangerineConst Const { get; }
+
         internal TangerineMod(ModInfo modInfo)
         {
             Info = modInfo;
@@ -36,6 +39,7 @@ namespace Tangerine.Manager.Mod
             DataManager = new TangerineDataManager(Id);
             TextDataManager = new TangerineTextDataManager(Id);
             Loader = new TangerineLoader(Id);
+            Const = new TangerineConst(Id);
         }
 
         /// <summary>

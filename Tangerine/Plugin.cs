@@ -34,10 +34,12 @@ public class Plugin : BasePlugin
         Location = Path.GetDirectoryName(IL2CPPChainloader.Instance.Plugins[GUID].Location);
 
         _harmony = new Harmony(GUID);
+        TangerineConst.InitializeHarmony(_harmony);
         TangerineDataManager.InitializeHarmony(_harmony);
         TangerineTextDataManager.InitializeHarmony(_harmony);
-        TangerineCharacter.InitializeHarmony(_harmony);
         TangerineLoader.InitializeHarmony(_harmony);
+
+        TangerineCharacter.InitializeHarmony(_harmony);
         TangerineAudioManager.InitializeHarmony(_harmony);
 
         // Start loading mods

@@ -184,6 +184,11 @@ namespace Tangerine.Manager
                 TableLoader.Load(modPath, mod.DataManager, mod.TextDataManager);
             }
 
+            if (ConstLoader.HasContentToLoad(modPath))
+            {
+                ConstLoader.Load(modPath, mod.Const);
+            }
+
             if (PluginLoader.HasContentToLoad(modPath))
             {
                 PluginLoader.Load(modPath, mod);
@@ -200,6 +205,7 @@ namespace Tangerine.Manager
             AssetRemapLoader.Unload(id);
             FileRemapLoader.Unload(id);
             TableLoader.Unload(id);
+            ConstLoader.Unload(id);
             PluginLoader.Unload(id);
         }
     }

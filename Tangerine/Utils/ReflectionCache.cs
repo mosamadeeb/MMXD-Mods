@@ -49,14 +49,14 @@ namespace Tangerine.Utils
             return GetPropertyAccessor(type, propertyName).Setter;
         }
 
-        public static object GetPropertyCached(object obj, string propertyName)
+        public static object GetPropertyCached(Type type, object obj, string propertyName)
         {
-            return GetPropertyGetter(obj.GetType(), propertyName)(obj);
+            return GetPropertyGetter(type, propertyName)(obj);
         }
 
-        public static void SetPropertyCached(object obj, string propertyName, object value)
+        public static void SetPropertyCached(Type type, object obj, string propertyName, object value)
         {
-            GetPropertySetter(obj.GetType(), propertyName)(obj, value);
+            GetPropertySetter(type, propertyName)(obj, value);
         }
     }
 }

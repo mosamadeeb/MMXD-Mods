@@ -11,8 +11,8 @@ namespace Tangerine.Manager.Loaders
 {
     internal static class TableLoader
     {
-        private const string TablesFolder = "Tables";
-        private const string TextTablesFolder = "TextTables";
+        internal const string TablesFolder = "Tables";
+        internal const string TextTablesFolder = "TextTables";
 
         public static bool Load(string modPath, TangerineDataManager dataManager, TangerineTextDataManager textDataManager)
         {
@@ -29,9 +29,14 @@ namespace Tangerine.Manager.Loaders
                     foreach (var tableFile in Directory.EnumerateFiles(tablesDir))
                     {
                         lastTable = tableFile;
-                        var typeName = Path.GetFileNameWithoutExtension(tableFile);
-                        var tableType = Type.GetType(Assembly.CreateQualifiedName(dataProviderAssembly.GetName().Name, typeName));
 
+                        var typeName = Path.GetFileNameWithoutExtension(tableFile);
+                        if (typeName == "PARAMETERS")
+                        {
+                            continue;
+                        }
+
+                        var tableType = Type.GetType(Assembly.CreateQualifiedName(dataProviderAssembly.GetName().Name, typeName));
                         if (tableType == null)
                         {
                             Plugin.Log.LogError($"Unknown table name {Path.GetFileNameWithoutExtension(tableFile)} for mod \"{modPath}\"");
