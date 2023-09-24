@@ -18,7 +18,7 @@ namespace Tangerine.Patchers
         [HarmonyPrefix]
         private static void GetAcbPrefix(string s_acb)
         {
-            if (s_acb != null && s_acb != string.Empty && !AudioManager.Instance.orangePool.ContainsKey(s_acb))
+            if (s_acb != null && s_acb != string.Empty && !s_acb.EndsWith("_null") && !AudioManager.Instance.orangePool.ContainsKey(s_acb))
             {
                 Plugin.Log.LogWarning($"ACB is not loaded: {s_acb}");
                 if (!_acbIsLoading.ContainsKey(s_acb))
