@@ -99,7 +99,6 @@ namespace Tangerine.Manager.Loaders
                     switch (key[0])
                     {
                         case 'n':
-                        case '#':
                             try
                             {
                                 dict[key] = ((JsonElement)dict[key]).Deserialize<int>();
@@ -114,9 +113,10 @@ namespace Tangerine.Manager.Loaders
                             break;
                         case 's':
                         case 'w':
-                        default:
                             dict[key] = (dict[key] == null) ? "null" : ((JsonElement)dict[key]).Deserialize<string>();
-
+                            break;
+                        default:
+                            // Don't read unused/unknown fields
                             break;
                     }
                 }
