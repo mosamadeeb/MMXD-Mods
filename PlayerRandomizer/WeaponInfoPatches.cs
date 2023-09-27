@@ -1,5 +1,4 @@
-﻿using Cinemachine.PostFX;
-using enums;
+﻿using enums;
 using HarmonyLib;
 using OrangeConsoleService;
 using System;
@@ -33,7 +32,7 @@ namespace PlayerRandomizer
 
                 if (!PlayerNetManager.Instance.dicWeapon.ContainsKey(randWeaponId))
                 {
-                    if (!_randWeaponInfos.ContainsKey(randWeaponId))
+                    if (!_randWeaponInfos.ContainsKey(randWeaponId) || !WeaponService.Instance.HaveWeapon(randWeaponId))
                     {
                         // Placeholder until it gets added
                         _randWeaponInfos[randWeaponId] = new WeaponInfo()

@@ -1,6 +1,7 @@
 ﻿using enums;
 using HarmonyLib;
 using OrangeConsoleService;
+using System;
 
 namespace PlayerRandomizer
 {
@@ -11,6 +12,7 @@ namespace PlayerRandomizer
         private static CHARACTER_TABLE _randCharacterTable = null;
         private static CharacterInfo _randCharacterInfo = null;
 
+        [HarmonyPatch(typeof(GoCheckUI), nameof(GoCheckUI.Setup), new Type[] { typeof(StageType), typeof(StageMode) })]
         [HarmonyPatch(typeof(GoCheckUI), nameof(GoCheckUI.CheckUIReFocus))]
         [HarmonyPrefix]
         private static void GoCheckUISetupPrefix()
@@ -27,7 +29,7 @@ namespace PlayerRandomizer
 
             if (!PlayerNetManager.Instance.dicCharacter.ContainsKey(RAND_CHARA_ID))
             {
-                if (_randCharacterInfo == null)
+                if (_randCharacterInfo == null || !CharacterService.Instance.HaveCharacter(RAND_CHARA_ID, true))
                 {
                     // Placeholder until it gets added
                     _randCharacterInfo ??= new CharacterInfo()
